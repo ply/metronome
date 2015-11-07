@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Display;
 import android.view.View;
 import android.widget.*;
@@ -14,6 +15,9 @@ public class Metronome extends Activity {
 
     //interface elements
     EditText bpmEditText;
+
+    Button tapButton;
+
     Switch soundSwitch;
     Switch firstBeatSwitch;
     Button plusSixButton;
@@ -27,6 +31,7 @@ public class Metronome extends Activity {
     Button timesTwoButton;
     Button timesThreeButton;
     Spinner timeSignSpinner;
+    ToggleButton startStopButton;
 
 
 
@@ -38,6 +43,9 @@ public class Metronome extends Activity {
     public final int DEFAULT_MEASURE = 4;
     public int bpm;
     public int measure;
+    public long timeMs;
+    public long differenceMs;
+
     public boolean audible;
     public boolean running;
 
@@ -65,12 +73,15 @@ public class Metronome extends Activity {
         audible = false;
         running = false;
 
+        timeMs = 0;
+
         //let's find dem buttons and the rest
         bpmEditText = (EditText) findViewById(R.id.bpmEditText);
         bpmEditText.setText(Integer.toString(bpm));
 
         soundSwitch = (Switch) findViewById(id.soundSwitch);
         firstBeatSwitch = (Switch) findViewById(id.firstBeatSwitch);
+        //todo if we want first beat accent on then we want sound on as well?
 
         plusSixButton = (Button) findViewById(R.id.plusSixButton);
         plusOneButton = (Button) findViewById(R.id.plusOneButton);
@@ -84,6 +95,10 @@ public class Metronome extends Activity {
         timesThreeButton = (Button) findViewById(R.id.timesThreeButton);
 
         timeSignSpinner = (Spinner) findViewById(R.id.timeSignSpinner);
+
+        startStopButton = (ToggleButton) findViewById(R.id.startStopButton);
+
+        tapButton = (Button) findViewById(R.id.tapButton);
 
         //button related actions
         plusSixButton.setOnClickListener(new View.OnClickListener() {
@@ -159,18 +174,41 @@ public class Metronome extends Activity {
         timeSignSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //measure = (Integer) timeSignSpinner.getItemAtPosition(i); //psuje
-                // aplikację przy tworzeniu i jeszcze nie wiem czemu
+                measure = Integer.valueOf(timeSignSpinner.getSelectedItem().toString());
                 //todo przeliczenie ilości kółek
                 //test
-                /*Toast.makeText(getApplicationContext(),
+                Toast.makeText(getApplicationContext(),
                         "Measure selected : " + Integer.toString(measure),
-                        Toast.LENGTH_SHORT).show();*/
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        startStopButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    running = true;
+                    startStopButton.setTextOn("Stop");
+                } else {
+                    // The toggle is disabled
+                    running = false;
+                    startStopButton.setTextOff("Start");
+                }
+            }
+        });
+
+        tapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                differenceMs = SystemClock.elapsedRealtime() - timeMs;
+                timeMs = SystemClock.elapsedRealtime();
+                bpm = 60000 / safeLongToInt(differenceMs);
+                updateBPM();
             }
         });
 
@@ -189,5 +227,12 @@ public class Metronome extends Activity {
     }
 
 
+    public static int safeLongToInt(long l) {
+        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException
+                    (l + " cannot be cast to int without changing its value.");
+        }
+        return (int) l;
+    }
 
 }

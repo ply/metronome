@@ -133,9 +133,11 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="{tu beda kolka}"
             android:id="@+id/kolkaTV" android:gravity="center_horizontal"/>
-    <Button
+    <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start/Stop"
-            android:id="@+id/startStopButton" android:gravity="center_horizontal"/>
+            android:textOff="Start"
+            android:textOn="Stop"
+            android:id="@+id/startStopButton"
+            android:gravity="center_horizontal"/>
 </LinearLayout>
