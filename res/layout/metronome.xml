@@ -152,12 +152,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" android:layout_weight="1"/>
-    <TextView
+    <!--TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="{tu beda kolka}"
-            android:id="@+id/kolkaTV" android:gravity="center_horizontal"/>
+            android:id="@+id/kolkaTV" android:gravity="center_horizontal"/-->
+    <SurfaceView
+            android:id="@+id/drawSurface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
