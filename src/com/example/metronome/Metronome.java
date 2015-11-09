@@ -42,12 +42,14 @@ public class Metronome extends Activity {
     public final int MIN_BPM = 20;
     public final int DEFAULT_MEASURE = 4;
     public int bpm;
+    public int newbpm;
     public int measure;
     public long timeMs;
     public long differenceMs;
 
     public boolean audible;
     public boolean running;
+    public boolean firstbeat;
 
 
     //we'll need that for the Dots class
@@ -72,6 +74,7 @@ public class Metronome extends Activity {
 
         audible = false;
         running = false;
+        firstbeat = false;
 
         timeMs = 0;
 
@@ -207,8 +210,30 @@ public class Metronome extends Activity {
             public void onClick(View view) {
                 differenceMs = SystemClock.elapsedRealtime() - timeMs;
                 timeMs = SystemClock.elapsedRealtime();
-                bpm = 60000 / safeLongToInt(differenceMs);
-                updateBPM();
+                newbpm = 60000 / safeLongToInt(differenceMs);
+                if (newbpm >= 15) {
+                    bpm = newbpm;
+                    updateBPM();
+                }
+            }
+        });
+
+        soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                audible = b;
+                firstBeatSwitch.setEnabled(b);
+                if(!b) {
+                    firstbeat = false;
+                } //<- this may be unnecessary tho
+
+            }
+        });
+
+        firstBeatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                firstbeat = b;
             }
         });
 
