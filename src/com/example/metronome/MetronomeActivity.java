@@ -11,7 +11,10 @@ import android.widget.*;
 
 import static com.example.metronome.R.*;
 
-public class Metronome extends Activity {
+public class MetronomeActivity extends Activity {
+
+    private MetronomeBackend backend;
+    private long lastTapTime = 0;
 
     //interface elements
     EditText bpmEditText;
@@ -33,24 +36,13 @@ public class Metronome extends Activity {
     Spinner timeSignSpinner;
     ToggleButton startStopButton;
 
-
-    public final int DEFAULT_BPM = 120;
-    public final int MAX_BPM = 900;
-    public final int MIN_BPM = 20;
-    public final int DEFAULT_MEASURE = 4;
-    private int bpm;
-    private int measure = DEFAULT_MEASURE;
-    private long lastTapTime = 0;
-
-    private boolean audible = false;
-    private boolean running = false;
-    private boolean firstbeat = false;
-
     //we'll need that for the Dots class
     private int screenWidthPx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        backend = new MetronomeBackend();
+
         super.onCreate(savedInstanceState);
         setContentView(layout.metronome);
 
@@ -61,11 +53,9 @@ public class Metronome extends Activity {
         display.getSize(size);
         screenWidthPx = size.x;
 
-        setBPM(DEFAULT_BPM);
-
         //let's find dem buttons and the rest
         bpmEditText = (EditText) findViewById(R.id.bpmEditText);
-        bpmEditText.setText(Integer.toString(bpm));
+        bpmEditText.setText(Integer.toString(backend.getBPM()));
 
         soundSwitch = (Switch) findViewById(id.soundSwitch);
         firstBeatSwitch = (Switch) findViewById(id.firstBeatSwitch);
@@ -92,72 +82,68 @@ public class Metronome extends Activity {
         plusSixButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm+6);
+                setBPM(backend.getBPM() + 6);
             }
         });
         plusOneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm + 1);
+                setBPM(backend.getBPM() + 1);
             }
         });
         plusThirtyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm + 30);
+                setBPM(backend.getBPM() + 30);
             }
         });
         minusSixButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm - 6);
+                setBPM(backend.getBPM() - 6);
             }
         });
         minusOneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm - 1);
+                setBPM(backend.getBPM() - 1);
             }
         });
         minusThirtyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm - 30);
+                setBPM(backend.getBPM() - 30);
             }
         });
         divideTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm/2);
+                setBPM(backend.getBPM() / 2);
             }
         });
         divideThreeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm / 3);
+                setBPM(backend.getBPM() / 3);
             }
         });
         timesThreeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm * 3);
+                setBPM(backend.getBPM() * 3);
             }
         });
         timesTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(bpm * 2);
+                setBPM(backend.getBPM() * 2);
             }
         });
         timeSignSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                measure = Integer.valueOf(timeSignSpinner.getSelectedItem().toString());
-                //todo przeliczenie ilości kółek
-                //test
-                Toast.makeText(getApplicationContext(),
-                        "Measure selected : " + Integer.toString(measure),
-                        Toast.LENGTH_SHORT).show();
+                backend.setMeasure(Integer.valueOf(timeSignSpinner.getSelectedItem().toString()));
+                // TODO przeliczenie ilości kółek
             }
 
             @Override
@@ -170,11 +156,11 @@ public class Metronome extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // The toggle is enabled
-                    running = true;
+                    backend.start();
                     startStopButton.setTextOn("Stop");
                 } else {
                     // The toggle is disabled
-                    running = false;
+                    backend.stop();
                     startStopButton.setTextOff("Start");
                 }
             }
@@ -194,32 +180,23 @@ public class Metronome extends Activity {
         soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                audible = b;
+                backend.setAudible(b);
                 firstBeatSwitch.setEnabled(b);
-                if(!b) {
-                    firstbeat = false;
-                } //<- this may be unnecessary tho
             }
         });
 
         firstBeatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                firstbeat = b;
+                backend.setFirstBeat(b);
             }
         });
     }
 
     public void setBPM(int bpm) {
-        if (bpm < MIN_BPM) { bpm = MIN_BPM; }
-        else if (bpm > MAX_BPM) { bpm = MAX_BPM; }
-
-        this.bpm = bpm;
-        bpmEditText.setText(Integer.toString(this.bpm));
-
-        //todo przeliczenie co ile ms tick
+        backend.setBPM(bpm);
+        bpmEditText.setText(Integer.toString(backend.getBPM()));
     }
-
     private static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
@@ -227,5 +204,4 @@ public class Metronome extends Activity {
         }
         return (int) l;
     }
-
 }
