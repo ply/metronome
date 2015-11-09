@@ -34,28 +34,20 @@ public class Metronome extends Activity {
     ToggleButton startStopButton;
 
 
-
-
-
     public final int DEFAULT_BPM = 120;
     public final int MAX_BPM = 900;
     public final int MIN_BPM = 20;
     public final int DEFAULT_MEASURE = 4;
     private int bpm;
-    public int newbpm;
-    public int measure;
-    public long timeMs;
-    public long differenceMs;
+    private int measure = DEFAULT_MEASURE;
+    private long lastTapTime = 0;
 
-    public boolean audible;
-    public boolean running;
-    public boolean firstbeat;
-
+    private boolean audible = false;
+    private boolean running = false;
+    private boolean firstbeat = false;
 
     //we'll need that for the Dots class
-    public int screenWidthPx;
-
-
+    private int screenWidthPx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,14 +61,7 @@ public class Metronome extends Activity {
         display.getSize(size);
         screenWidthPx = size.x;
 
-        bpm = DEFAULT_BPM;
-        measure = DEFAULT_MEASURE;
-
-        audible = false;
-        running = false;
-        firstbeat = false;
-
-        timeMs = 0;
+        setBPM(DEFAULT_BPM);
 
         //let's find dem buttons and the rest
         bpmEditText = (EditText) findViewById(R.id.bpmEditText);
@@ -198,9 +183,8 @@ public class Metronome extends Activity {
         tapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                differenceMs = SystemClock.elapsedRealtime() - timeMs;
-                timeMs = SystemClock.elapsedRealtime();
-                newbpm = 60000 / safeLongToInt(differenceMs);
+                int newbpm = 60000 / safeLongToInt(SystemClock.elapsedRealtime() - lastTapTime);
+                lastTapTime = SystemClock.elapsedRealtime();
                 if (newbpm >= 15) {
                     setBPM(newbpm);
                 }
@@ -215,7 +199,6 @@ public class Metronome extends Activity {
                 if(!b) {
                     firstbeat = false;
                 } //<- this may be unnecessary tho
-
             }
         });
 
@@ -225,8 +208,6 @@ public class Metronome extends Activity {
                 firstbeat = b;
             }
         });
-
-
     }
 
     public void setBPM(int bpm) {
@@ -239,8 +220,7 @@ public class Metronome extends Activity {
         //todo przeliczenie co ile ms tick
     }
 
-
-    public static int safeLongToInt(long l) {
+    private static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
                     (l + " cannot be cast to int without changing its value.");
