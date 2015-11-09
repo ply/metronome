@@ -41,7 +41,7 @@ public class Metronome extends Activity {
     public final int MAX_BPM = 900;
     public final int MIN_BPM = 20;
     public final int DEFAULT_MEASURE = 4;
-    public int bpm;
+    private int bpm;
     public int newbpm;
     public int measure;
     public long timeMs;
@@ -107,71 +107,61 @@ public class Metronome extends Activity {
         plusSixButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm + 6;
-                updateBPM();
+                setBPM(bpm+6);
             }
         });
         plusOneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm + 1;
-                updateBPM();
+                setBPM(bpm + 1);
             }
         });
         plusThirtyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm + 30;
-                updateBPM();
+                setBPM(bpm + 30);
             }
         });
         minusSixButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm - 6;
-                updateBPM();
+                setBPM(bpm - 6);
             }
         });
         minusOneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm - 1;
-                updateBPM();
+                setBPM(bpm - 1);
             }
         });
         minusThirtyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm - 30;
-                updateBPM();
+                setBPM(bpm - 30);
             }
         });
         divideTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm / 2;
-                updateBPM();
+                setBPM(bpm/2);
             }
         });
         divideThreeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm / 3;
-                updateBPM();
+                setBPM(bpm / 3);
             }
         });
         timesThreeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm * 3;
-                updateBPM();
+                setBPM(bpm * 3);
             }
         });
         timesTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bpm = bpm * 2;
-                updateBPM();
+                setBPM(bpm * 2);
             }
         });
         timeSignSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -212,8 +202,7 @@ public class Metronome extends Activity {
                 timeMs = SystemClock.elapsedRealtime();
                 newbpm = 60000 / safeLongToInt(differenceMs);
                 if (newbpm >= 15) {
-                    bpm = newbpm;
-                    updateBPM();
+                    setBPM(newbpm);
                 }
             }
         });
@@ -240,13 +229,12 @@ public class Metronome extends Activity {
 
     }
 
-    public void updateBPM(){
-
+    public void setBPM(int bpm) {
         if (bpm < MIN_BPM) { bpm = MIN_BPM; }
         else if (bpm > MAX_BPM) { bpm = MAX_BPM; }
-        else {}
 
-        bpmEditText.setText(Integer.toString(bpm));
+        this.bpm = bpm;
+        bpmEditText.setText(Integer.toString(this.bpm));
 
         //todo przeliczenie co ile ms tick
     }
