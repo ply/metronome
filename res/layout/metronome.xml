@@ -8,13 +8,13 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal" >
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="BPM"
                 android:id="@+id/bpmTextView" android:layout_weight="1"
-                android:layout_gravity="center" style="@android:style/TextAppearance.DeviceDefault.Large"
+                android:layout_gravity="center"
                 android:gravity="center_horizontal"/>
         <EditText
                 android:layout_width="wrap_content"
@@ -22,8 +22,8 @@
                 android:inputType="number|phone"
                 android:ems="3"
                 android:id="@+id/bpmEditText"
-                android:maxLength="3" android:layout_weight="1" style="@android:style/TextAppearance.DeviceDefault.Large"
-                android:textAlignment="center" android:selectAllOnFocus="true" android:gravity="center"/>
+                android:maxLength="3" android:layout_weight="1"
+                android:textAlignment="center" android:gravity="center"/>
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -154,14 +154,14 @@
             android:layout_gravity="center_horizontal" android:layout_weight="1"/>
     <!--TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height=""
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="{tu beda kolka}"
             android:id="@+id/kolkaTV" android:gravity="center_horizontal"/-->
     <SurfaceView
             android:id="@+id/drawSurface"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="80px" />
     <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -172,7 +172,6 @@
             android:textOff="Start"
             android:textOn="Stop"
             android:id="@+id/startStopButton"
-            style="@android:style/TextAppearance.DeviceDefault.Large" android:minLines="2"
             >
         <requestFocus/>
     </ToggleButton>

@@ -1,16 +1,23 @@
 package com.example.metronome;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.Point;
+import android.graphics.*;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.view.Display;
-import android.view.View;
+import android.view.*;
+import android.view.SurfaceHolder.Callback;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
-import static com.example.metronome.R.*;
 
+
+/**
+ * @author Paweł Łyżwa
+ * @author Joanna Grochal
+ */
 public class MetronomeActivity extends Activity {
 
     private MetronomeBackend backend;
@@ -36,15 +43,17 @@ public class MetronomeActivity extends Activity {
     Spinner timeSignSpinner;
     ToggleButton startStopButton;
 
+    SurfaceView drawSurface;
+
     //we'll need that for the Dots class
-    private int screenWidthPx;
+    public int screenWidthPx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         backend = new MetronomeBackend();
 
         super.onCreate(savedInstanceState);
-        setContentView(layout.metronome);
+        setContentView(R.layout.metronome);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -57,9 +66,8 @@ public class MetronomeActivity extends Activity {
         bpmEditText = (EditText) findViewById(R.id.bpmEditText);
         bpmEditText.setText(Integer.toString(backend.getBPM()));
 
-        soundSwitch = (Switch) findViewById(id.soundSwitch);
-        firstBeatSwitch = (Switch) findViewById(id.firstBeatSwitch);
-        //todo if we want first beat accent on then we want sound on as well?
+        soundSwitch = (Switch) findViewById(R.id.soundSwitch);
+        firstBeatSwitch = (Switch) findViewById(R.id.firstBeatSwitch);
 
         plusSixButton = (Button) findViewById(R.id.plusSixButton);
         plusOneButton = (Button) findViewById(R.id.plusOneButton);
@@ -158,6 +166,7 @@ public class MetronomeActivity extends Activity {
                     // The toggle is enabled
                     backend.start();
                     startStopButton.setTextOn("Stop");
+
                 } else {
                     // The toggle is disabled
                     backend.stop();
@@ -185,10 +194,61 @@ public class MetronomeActivity extends Activity {
             }
         });
 
+        bpmEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    setBPM(Integer.parseInt(bpmEditText.getText().toString()));
+                    InputMethodManager imm = (InputMethodManager)
+                            getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(
+                            bpmEditText.getWindowToken(), 0);
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
         firstBeatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 backend.setFirstBeat(b);
+            }
+        });
+
+        drawSurface = (SurfaceView) findViewById(R.id.drawSurface);
+        //final Bitmap bm;
+        drawSurface.getHolder().addCallback(new Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+
+                Canvas canvas = holder.lockCanvas();
+                canvas.drawColor(Color.TRANSPARENT);
+
+                Paint paintFill = new Paint();
+                Paint paintStroke = new Paint();
+                paintFill.setStyle(Paint.Style.FILL);
+                paintFill.setColor(Color.WHITE);
+                paintStroke.setStyle(Paint.Style.STROKE);
+                paintStroke.setColor(Color.WHITE);
+
+                canvas.drawCircle(20, 20, 10, paintFill);
+                canvas.drawCircle(70, 20, 10, paintStroke);
+
+                holder.unlockCanvasAndPost(canvas);
+                //czyli canvas powinien być przerysowany co 1 ticka?
+
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+
             }
         });
     }

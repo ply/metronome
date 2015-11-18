@@ -8,7 +8,7 @@ public class MetronomeBackend {
     public final int MAX_BPM = 900;
     public final int MIN_BPM = 20;
     public final int DEFAULT_MEASURE = 4;
-    private int bpm;
+    private int bpm = DEFAULT_BPM;
 
     private int measure = DEFAULT_MEASURE;
 
