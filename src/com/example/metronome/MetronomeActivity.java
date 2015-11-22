@@ -20,7 +20,7 @@ import android.widget.*;
  */
 public class MetronomeActivity extends Activity {
 
-    private MetronomeBackend backend;
+    private Ticker ticker;
     private long lastTapTime = 0;
 
     //interface elements
@@ -50,7 +50,7 @@ public class MetronomeActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        backend = new MetronomeBackend();
+        ticker = new Ticker(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.metronome);
@@ -64,7 +64,7 @@ public class MetronomeActivity extends Activity {
 
         //let's find dem buttons and the rest
         bpmEditText = (EditText) findViewById(R.id.bpmEditText);
-        bpmEditText.setText(Integer.toString(backend.getBPM()));
+        bpmEditText.setText(Integer.toString(ticker.getBPM()));
 
         soundSwitch = (Switch) findViewById(R.id.soundSwitch);
         firstBeatSwitch = (Switch) findViewById(R.id.firstBeatSwitch);
@@ -90,67 +90,67 @@ public class MetronomeActivity extends Activity {
         plusSixButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() + 6);
+                setBPM(ticker.getBPM() + 6);
             }
         });
         plusOneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() + 1);
+                setBPM(ticker.getBPM() + 1);
             }
         });
         plusThirtyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() + 30);
+                setBPM(ticker.getBPM() + 30);
             }
         });
         minusSixButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() - 6);
+                setBPM(ticker.getBPM() - 6);
             }
         });
         minusOneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() - 1);
+                setBPM(ticker.getBPM() - 1);
             }
         });
         minusThirtyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() - 30);
+                setBPM(ticker.getBPM() - 30);
             }
         });
         divideTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() / 2);
+                setBPM(ticker.getBPM() / 2);
             }
         });
         divideThreeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() / 3);
+                setBPM(ticker.getBPM() / 3);
             }
         });
         timesThreeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() * 3);
+                setBPM(ticker.getBPM() * 3);
             }
         });
         timesTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setBPM(backend.getBPM() * 2);
+                setBPM(ticker.getBPM() * 2);
             }
         });
         timeSignSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                backend.setMeasure(Integer.valueOf(timeSignSpinner.getSelectedItem().toString()));
+                ticker.setMeasure(Integer.valueOf(timeSignSpinner.getSelectedItem().toString()));
                 // TODO przeliczenie ilości kółek
             }
 
@@ -164,12 +164,12 @@ public class MetronomeActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // The toggle is enabled
-                    backend.start();
+                    ticker.start();
                     startStopButton.setTextOn("Stop");
 
                 } else {
                     // The toggle is disabled
-                    backend.stop();
+                    ticker.stop();
                     startStopButton.setTextOff("Start");
                 }
             }
@@ -189,7 +189,7 @@ public class MetronomeActivity extends Activity {
         soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                backend.setAudible(b);
+                ticker.setAudible(b);
                 firstBeatSwitch.setEnabled(b);
             }
         });
@@ -213,7 +213,7 @@ public class MetronomeActivity extends Activity {
         firstBeatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                backend.setFirstBeat(b);
+                ticker.setFirstBeat(b);
             }
         });
 
@@ -254,8 +254,8 @@ public class MetronomeActivity extends Activity {
     }
 
     public void setBPM(int bpm) {
-        backend.setBPM(bpm);
-        bpmEditText.setText(Integer.toString(backend.getBPM()));
+        ticker.setBPM(bpm);
+        bpmEditText.setText(Integer.toString(ticker.getBPM()));
     }
     private static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {

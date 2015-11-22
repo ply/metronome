@@ -6,14 +6,14 @@ package com.example.metronome;
  */
 public class Dots {
 
-    private MetronomeBackend backend = new MetronomeBackend();
+    //private MetronomeBackend backend = new MetronomeBackend();
 
     public Dots() {
 
     }
 
-    public int amount() { return backend.getMeasure(); }
+    //public int amount() { return backend.getMeasure(); }
 
-    public int current() { return 8 };
+    public int current() { return 8; };
 
 }
