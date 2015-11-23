@@ -2,7 +2,6 @@ package com.example.metronome;
 
 import android.content.Context;
 import android.media.SoundPool;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.SystemClock;
 
@@ -13,7 +12,7 @@ import static android.media.AudioManager.STREAM_MUSIC;
 /**
  * Metronome backend - asynchronous task responsible for executing metronome tick methods (sound)
  */
-public class Ticker extends AsyncTask<Void, Void, Void> implements Closeable {
+public class Ticker implements Closeable, Runnable {
     public final int DEFAULT_BPM = 120;
     public final int MAX_BPM = 900;
     public final int MIN_BPM = 20;
@@ -29,14 +28,16 @@ public class Ticker extends AsyncTask<Void, Void, Void> implements Closeable {
     private long nextTickTime = 0;
 
     private Context context;
+    private Handler handler;
     private SoundPool soundpool;
     private int normalTickId, strongTickId;
 
     public Ticker (Context context) {
-        this.context = context;
         this.soundpool = new SoundPool(2, STREAM_MUSIC, 0);
         this.strongTickId = soundpool.load(context, R.raw.hi_click, 1);
         this.normalTickId = soundpool.load(context, R.raw.lo_click, 1);
+        this.context = context;
+        this.handler = new Handler();
     }
 
     public void close() {
@@ -44,7 +45,8 @@ public class Ticker extends AsyncTask<Void, Void, Void> implements Closeable {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    public void run() {
+        if (!this.running) { return; }
         if (this.nextTickTime + 60e3/this.bpm < SystemClock.uptimeMillis()) {
             this.nextTickTime = SystemClock.uptimeMillis();
         } else {
@@ -65,13 +67,7 @@ public class Ticker extends AsyncTask<Void, Void, Void> implements Closeable {
 
         this.nextTickTime += 60e3/this.bpm;
         this.nextBeat = this.nextBeat % this.measure + 1;
-        try {
-            Thread.sleep(this.nextBeat - SystemClock.elapsedRealtime() - 100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        this.execute();
-        return null;
+        handler.postAtTime(this, this.nextTickTime - 40);
     }
 
     public boolean isAudible() {
@@ -114,16 +110,11 @@ public class Ticker extends AsyncTask<Void, Void, Void> implements Closeable {
     public void start () {
         this.running = true;
         this.nextBeat = 1;
-        this.execute();
+        this.run();
     }
 
     public void stop () {
-        this.cancel(false);
-    }
-
-    protected void onCanceled(Object o) {
         this.running = false;
-        this.nextTickTime = 0;
     }
 
     public boolean isRunning() {
