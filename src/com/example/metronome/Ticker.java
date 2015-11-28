@@ -14,7 +14,7 @@ import static android.media.AudioManager.STREAM_MUSIC;
  */
 public class Ticker implements Closeable, Runnable {
     public final int DEFAULT_BPM = 120;
-    public final int MAX_BPM = 900;
+    public final int MAX_BPM = 300;
     public final int MIN_BPM = 20;
     public final int DEFAULT_MEASURE = 4;
     private int bpm = DEFAULT_BPM;
