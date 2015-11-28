@@ -13,8 +13,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
-
-
 /**
  * @author Paweł Łyżwa
  * @author Joanna Grochal
@@ -26,25 +24,10 @@ public class MetronomeActivity extends Activity {
 
     //interface elements
     EditText bpmEditText;
-
-    Button tapButton;
-
-    Switch soundSwitch;
-    Switch firstBeatSwitch;
-    Button plusSixButton;
-    Button plusOneButton;
-    Button plusThirtyButton;
-    Button minusSixButton;
-    Button minusOneButton;
-    Button minusThirtyButton;
-    Button divideThreeButton;
-    Button divideTwoButton;
-    Button timesTwoButton;
-    Button timesThreeButton;
+    Switch soundSwitch, firstBeatSwitch;
     Spinner timeSignSpinner;
-    ToggleButton startStopButton;
-
     DotsSurfaceView dots;
+    ToggleButton startStopButton;
 
     private int screenWidthPx;
 
@@ -59,12 +42,12 @@ public class MetronomeActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-
+        /*
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         screenWidthPx = size.x;
-
+        */
 
         //let's find dem buttons and the rest
         bpmEditText = (EditText) findViewById(R.id.bpmEditText);
@@ -72,85 +55,73 @@ public class MetronomeActivity extends Activity {
 
         soundSwitch = (Switch) findViewById(R.id.soundSwitch);
         firstBeatSwitch = (Switch) findViewById(R.id.firstBeatSwitch);
-
-        plusSixButton = (Button) findViewById(R.id.plusSixButton);
-        plusOneButton = (Button) findViewById(R.id.plusOneButton);
-        plusThirtyButton = (Button) findViewById(R.id.plusThirtyButton);
-        minusSixButton = (Button) findViewById(R.id.minusSixButton);
-        minusOneButton = (Button) findViewById(R.id.minusOneButton);
-        minusThirtyButton = (Button) findViewById(R.id.minusThirtyButton);
-        divideThreeButton = (Button) findViewById(R.id.divideThreeButton);
-        divideTwoButton = (Button) findViewById(R.id.divideTwoButton);
-        timesTwoButton = (Button) findViewById(R.id.timesTwoButton);
-        timesThreeButton = (Button) findViewById(R.id.timesThreeButton);
-
         timeSignSpinner = (Spinner) findViewById(R.id.timeSignSpinner);
-
         startStopButton = (ToggleButton) findViewById(R.id.startStopButton);
 
-        tapButton = (Button) findViewById(R.id.tapButton);
+
 
         //button related actions
-        plusSixButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.plusSixButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() + 6);
             }
         });
-        plusOneButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.plusOneButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() + 1);
             }
         });
-        plusThirtyButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.plusThirtyButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() + 30);
             }
         });
-        minusSixButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.minusSixButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() - 6);
             }
         });
-        minusOneButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.minusOneButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() - 1);
             }
         });
-        minusThirtyButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.minusThirtyButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() - 30);
             }
         });
-        divideTwoButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.divideTwoButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() / 2);
             }
         });
-        divideThreeButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.divideThreeButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() / 3);
             }
         });
-        timesThreeButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.timesThreeButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() * 3);
             }
         });
-        timesTwoButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.timesTwoButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setBPM(ticker.getBPM() * 2);
             }
         });
+
         timeSignSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -178,7 +149,7 @@ public class MetronomeActivity extends Activity {
             }
         });
 
-        tapButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.tapButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int newbpm = 60000 / safeLongToInt(SystemClock.elapsedRealtime() - lastTapTime);
