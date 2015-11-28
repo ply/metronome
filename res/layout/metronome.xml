@@ -158,8 +158,8 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="{tu beda kolka}"
             android:id="@+id/kolkaTV" android:gravity="center_horizontal"/-->
-    <SurfaceView
-            android:id="@+id/drawSurface"
+    <com.example.metronome.DotsSurfaceView
+            android:id="@+id/dots"
             android:layout_width="match_parent"
             android:layout_height="80px" />
     <Space

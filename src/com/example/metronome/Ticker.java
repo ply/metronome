@@ -16,28 +16,29 @@ public class Ticker implements Closeable, Runnable {
     public final int DEFAULT_BPM = 120;
     public final int MAX_BPM = 300;
     public final int MIN_BPM = 20;
-    public final int DEFAULT_MEASURE = 4;
     private int bpm = DEFAULT_BPM;
 
-    private int measure = DEFAULT_MEASURE;
+    private int measure;
 
     private boolean audible = false;
     private boolean running = false;
     private boolean firstbeat = false;
-    private int nextBeat;
+    private int currentBeat;
     private long nextTickTime = 0;
 
     private Context context;
     private Handler handler;
     private SoundPool soundpool;
+    private DotsSurfaceView dots;
     private int normalTickId, strongTickId;
 
-    public Ticker (Context context) {
+    public Ticker (Context context, DotsSurfaceView dots) {
         this.soundpool = new SoundPool(2, STREAM_MUSIC, 0);
         this.strongTickId = soundpool.load(context, R.raw.hi_click, 1);
         this.normalTickId = soundpool.load(context, R.raw.lo_click, 1);
         this.context = context;
         this.handler = new Handler();
+        this.dots = dots;
     }
 
     public void close() {
@@ -52,21 +53,20 @@ public class Ticker implements Closeable, Runnable {
         } else {
             while (SystemClock.uptimeMillis() < this.nextTickTime) {}
         }
+        this.currentBeat = this.currentBeat % this.measure + 1;
 
         if (this.audible) {
             int tickId;
-            if (this.firstbeat && this.nextBeat == 1) {
+            if (this.firstbeat && this.currentBeat == 1) {
                 tickId = this.strongTickId;
             } else {
                 tickId = this.normalTickId;
             }
             soundpool.play(tickId, 1, 1, 1, 0, 1);
         }
-
-        // TODO: add drawing circles (Dots)
+        dots.setCount(currentBeat);
 
         this.nextTickTime += 60e3/this.bpm;
-        this.nextBeat = this.nextBeat % this.measure + 1;
         handler.postAtTime(this, this.nextTickTime - 40);
     }
 
@@ -90,13 +90,11 @@ public class Ticker implements Closeable, Runnable {
         }
     }
 
-    public int getMeasure() {
-        return measure;
-    }
-
     public void setMeasure(int measure) {
+        if (measure < 2 && measure > 7) throw new IllegalArgumentException();
         this.measure = measure;
-        // TODO
+        this.currentBeat = 0;
+        dots.setParameters(currentBeat, measure);
     }
 
     public boolean getFirstBeat() {
@@ -109,7 +107,7 @@ public class Ticker implements Closeable, Runnable {
 
     public void start () {
         this.running = true;
-        this.nextBeat = 1;
+        this.currentBeat = 0;
         this.run();
     }
 
@@ -128,4 +126,6 @@ public class Ticker implements Closeable, Runnable {
         else if (bpm > MAX_BPM) { bpm = MAX_BPM; }
         this.bpm = bpm;
     }
+    public int getCurrentBeat() { return currentBeat; }
+    public int getMeasure() { return measure; }
 }

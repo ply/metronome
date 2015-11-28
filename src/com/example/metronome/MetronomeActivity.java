@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.*;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.*;
 import android.view.SurfaceHolder.Callback;
 import android.view.inputmethod.EditorInfo;
@@ -43,24 +44,27 @@ public class MetronomeActivity extends Activity {
     Spinner timeSignSpinner;
     ToggleButton startStopButton;
 
-    SurfaceView drawSurface;
+    DotsSurfaceView dots;
 
-    //we'll need that for the Dots class
-    public int screenWidthPx;
+    private int screenWidthPx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        ticker = new Ticker(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.metronome);
 
+        dots = (DotsSurfaceView) findViewById(R.id.dots);
+        ticker = new Ticker(this, dots);
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         screenWidthPx = size.x;
+
 
         //let's find dem buttons and the rest
         bpmEditText = (EditText) findViewById(R.id.bpmEditText);
@@ -151,7 +155,6 @@ public class MetronomeActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 ticker.setMeasure(Integer.valueOf(timeSignSpinner.getSelectedItem().toString()));
-                // TODO przeliczenie ilości kółek
             }
 
             @Override
@@ -214,41 +217,6 @@ public class MetronomeActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 ticker.setFirstBeat(b);
-            }
-        });
-
-        drawSurface = (SurfaceView) findViewById(R.id.drawSurface);
-        //final Bitmap bm;
-        drawSurface.getHolder().addCallback(new Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-
-                Canvas canvas = holder.lockCanvas();
-                canvas.drawColor(Color.TRANSPARENT);
-
-                Paint paintFill = new Paint();
-                Paint paintStroke = new Paint();
-                paintFill.setStyle(Paint.Style.FILL);
-                paintFill.setColor(Color.WHITE);
-                paintStroke.setStyle(Paint.Style.STROKE);
-                paintStroke.setColor(Color.WHITE);
-
-                canvas.drawCircle(20, 20, 10, paintFill);
-                canvas.drawCircle(70, 20, 10, paintStroke);
-
-                holder.unlockCanvasAndPost(canvas);
-                //czyli canvas powinien być przerysowany co 1 ticka?
-
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
             }
         });
     }
