@@ -7,6 +7,7 @@ import android.os.SystemClock;
 
 import java.io.Closeable;
 
+import com.example.metronome.*;
 import static android.media.AudioManager.STREAM_MUSIC;
 
 /**

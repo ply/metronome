@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
+import com.example.metronome.*;
 /**
  * @author Paweł Łyżwa
  * @author Joanna Grochal

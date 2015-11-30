@@ -53,6 +53,7 @@ class DotsSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     private void update() {
         Canvas canvas = getHolder().lockCanvas();
+        canvas.drawColor(Color.BLACK);
         this.onDraw(canvas);
         getHolder().unlockCanvasAndPost(canvas);
     }
