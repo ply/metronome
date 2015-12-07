@@ -1,23 +1,18 @@
 package com.example.metronome;
 
 import android.content.Context;
-import android.media.SoundPool;
 import android.os.Handler;
 import android.os.SystemClock;
 
 import java.io.Closeable;
 
-import com.example.metronome.*;
-import static android.media.AudioManager.STREAM_MUSIC;
-
 /**
  * Metronome backend - asynchronous task responsible for executing metronome tick methods (sound)
  */
 public class Ticker implements Closeable, Runnable {
-    public final int DEFAULT_BPM = 120;
-    public final int MAX_BPM = 300;
-    public final int MIN_BPM = 20;
-    private int bpm = DEFAULT_BPM;
+    private Constants constants = new Constants();
+
+    private int bpm = constants.getDefaultBpm();
 
     private int measure;
 
@@ -29,21 +24,17 @@ public class Ticker implements Closeable, Runnable {
 
     private Context context;
     private Handler handler;
-    private SoundPool soundpool;
     private DotsSurfaceView dots;
-    private int normalTickId, strongTickId;
+    private SoundPoolTicker soundpoolticker;
 
     public Ticker (Context context, DotsSurfaceView dots) {
-        this.soundpool = new SoundPool(2, STREAM_MUSIC, 0);
-        this.strongTickId = soundpool.load(context, R.raw.hi_click, 1);
-        this.normalTickId = soundpool.load(context, R.raw.lo_click, 1);
         this.context = context;
         this.handler = new Handler();
+        this.soundpoolticker = new SoundPoolTicker(context);
         this.dots = dots;
     }
-
     public void close() {
-        this.soundpool.release();
+        this.soundpoolticker.release();
     }
 
     @Override
@@ -59,11 +50,11 @@ public class Ticker implements Closeable, Runnable {
         if (this.audible) {
             int tickId;
             if (this.firstbeat && this.currentBeat == 1) {
-                tickId = this.strongTickId;
+                tickId = soundpoolticker.getStrongTickId();
             } else {
-                tickId = this.normalTickId;
+                tickId = soundpoolticker.getNormalTickId();
             }
-            soundpool.play(tickId, 1, 1, 1, 0, 1);
+            soundpoolticker.play(tickId, 1, 1, 1, 0, 1);
         }
         dots.setCount(currentBeat);
 
@@ -114,6 +105,7 @@ public class Ticker implements Closeable, Runnable {
 
     public void stop () {
         this.running = false;
+        dots.setCount(0);
     }
 
     public boolean isRunning() {
@@ -123,8 +115,8 @@ public class Ticker implements Closeable, Runnable {
     public int getBPM() { return this.bpm; }
 
     public void setBPM(int bpm) {
-        if (bpm < MIN_BPM) { bpm = MIN_BPM; }
-        else if (bpm > MAX_BPM) { bpm = MAX_BPM; }
+        if (bpm < constants.getMinBpm()) { bpm = constants.getMinBpm(); }
+        else if (bpm > constants.getMaxBpm()) { bpm = constants.getMaxBpm(); }
         this.bpm = bpm;
     }
     public int getCurrentBeat() { return currentBeat; }

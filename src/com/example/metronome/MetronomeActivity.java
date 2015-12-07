@@ -30,7 +30,7 @@ public class MetronomeActivity extends Activity {
     DotsSurfaceView dots;
     ToggleButton startStopButton;
 
-    private int screenWidthPx;
+    //private int screenWidthPx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class MetronomeActivity extends Activity {
         ticker = new Ticker(this, dots);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         /*
         Display display = getWindowManager().getDefaultDisplay();
@@ -203,5 +203,11 @@ public class MetronomeActivity extends Activity {
                     (l + " cannot be cast to int without changing its value.");
         }
         return (int) l;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ticker.stop();
     }
 }

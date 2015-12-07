@@ -5,7 +5,7 @@ import android.test.AndroidTestCase;
 /**
  * Tests for MetronomeBackend
  */
-public class MetronomeBackendTest extends AndroidTestCase {
+public class TickerTest extends AndroidTestCase {
 
     MetronomeBackend backend;
 
