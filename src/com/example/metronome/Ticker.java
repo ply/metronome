@@ -48,13 +48,7 @@ public class Ticker implements Closeable, Runnable {
         this.currentBeat = this.currentBeat % this.measure + 1;
 
         if (this.audible) {
-            int tickId;
-            if (this.firstbeat && this.currentBeat == 1) {
-                tickId = soundpoolticker.getStrongTickId();
-            } else {
-                tickId = soundpoolticker.getNormalTickId();
-            }
-            soundpoolticker.play(tickId, 1, 1, 1, 0, 1);
+            soundpoolticker.play((this.firstbeat && this.currentBeat == 1));
         }
         dots.setCount(currentBeat);
 

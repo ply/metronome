@@ -1,10 +1,5 @@
 package com.example.metronome;
 
-/**
- * Created by JG on 2015-12-06.
- */
-
-
 import android.content.Context;
 import android.media.SoundPool;
 import android.os.Handler;
@@ -31,18 +26,13 @@ public class SoundPoolTicker {
         this.soundpool.release();
     }
 
-    public void play(int tickId, int m, int n, int o, int p, int q){
-        soundpool.play(tickId, m, n, o, p, q);
-
-
+    public void play(boolean strong){
+        soundpool.play(
+                strong ? this.strongTickId : this.normalTickId, // soundID
+                1.0f, 1.0f, // left and right volume
+                1, // priority
+                0, // no loop
+                1.0f // playback rate
+                );
     }
-
-    public int getNormalTickId(){
-        return normalTickId;
-    }
-
-    public int getStrongTickId(){
-        return strongTickId;
-    }
-
 }
