@@ -16,7 +16,6 @@ public class SoundPoolTicker {
     private SoundPool soundpool;
 
     private Context context;
-    private Handler handler;
 
     private int normalTickId, strongTickId;
 
@@ -26,7 +25,6 @@ public class SoundPoolTicker {
         this.strongTickId = soundpool.load(context, R.raw.hi_click, 1);
         this.normalTickId = soundpool.load(context, R.raw.lo_click, 1);
         this.context = context;
-        this.handler = new Handler();
     }
 
     public void release(){

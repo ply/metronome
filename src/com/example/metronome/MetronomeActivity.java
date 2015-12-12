@@ -3,17 +3,13 @@ package com.example.metronome;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.*;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.*;
-import android.view.SurfaceHolder.Callback;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
-import com.example.metronome.*;
 /**
  * @author Paweł Łyżwa
  * @author Joanna Grochal
